@@ -1,6 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import FieldRenderer from './FieldRenderer';
 import type { SchemaType } from '../schema/page';
+import { setDataToDB } from '../lib/db';
 
 interface FormProps {
   schema: SchemaType;
@@ -22,9 +23,23 @@ const Form: React.FC<FormProps> = ({ schema }) => {
     }));
   };
 
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    try {
+      setDataToDB('Damian-Medrano', formData);
+      alert("Data saved!");
+      setFormData({});
+
+    } catch (error) {
+      console.error('Error: ', error);
+    }
+  }
+
+
   return (
     // TODO-1: Form should submit this information
-    <form className="space-y-8">
+    <form className="space-y-8" onSubmit={handleSubmit}>
       {Object.keys(schema.properties).map((fieldName) => (
         <FieldRenderer
           key={fieldName}
