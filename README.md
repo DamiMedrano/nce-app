@@ -1,43 +1,34 @@
-# Nyla Challenge Editor
+# NCE
 
-## Introduction
+## What the app does:
+Update the form and see the changes in the live site.
 
-Thanks for your interest! We expect this exercise to take up to 4 hours of your time (there's no timer, you can do it at your own pace, taking as long as you want). Feel free to ask us any questions if something isn't clear.
 
-For domain reference:
+## Checkbox Input Handling Improvement
 
-- A Visitor is an end-user visiting/shopping on a Nyla Site
-- A Merchant is a company that uses the Nyla Editor to create their own ecommerce site with no-code.
+### Problem:
+Initially, there was an issue with the checkbox input not responding when clicked.
 
-### 1. Make the Form submit and the Site read that data
+### Solution:
+In the `handleInputChange` function within the `Form` component, we improved the checkbox input handling. We're now checking both the input's type and name to determine whether it's the "truncateDescription" checkbox. This ensures that the checkbox is properly handled and its value changes as expected.
 
-The Editor (Form) currently does not submit the data anywhere, and the Site is rendering mock data at the moment.
+## Error Display for Checkbox Input
 
-You must make the Editor Form store the results (see `lib/db.ts`) and the Site page render the stored data.
+### Problem:
+The goal was to not show errors when the "Truncate Description" checkbox is checked.
 
-- On the Editor side, consider best practices working with forms, as well as error handling.
+### Solution:
+In the `FieldRenderer` component, we adjusted the rendering of error messages for checkbox inputs. Now, the error message is displayed only when the checkbox is not checked (`!truncateDescription`). If the checkbox is checked, the error message won't show, even if there's an error. This provides a more appropriate display of errors based on the checkbox's state.
 
-- On the Site, consider that performance of the site is extremely important for us, and we don't want to have an outage if the Redis provider is temporarily unavailable. However, Merchants expect their Site to update when ever they submit a change.
+## Truncating Description and Submission
 
-### 2. Add placeholders and conditional functionality to the form
+### Problem:
+The project required truncating the description to 100 characters if the "Truncate Description" checkbox is checked before submitting the form.
 
-#### A. Placeholders
+### Solution:
+In the `handleSubmit` function of the `Form` component, we implemented the logic to truncate the description before submitting. If the checkbox is checked and the description is longer than 100 characters, we truncate it to 100 characters and add "...". Then, the form data is updated with the truncated description. After successful submission, the checkbox's state (`truncateDescription`) is reset to `false`.
 
-Extend the current schema to allow each property to define an optional placeholder to render in the form when the inputs are empty – instead of the current generic "Enter your {fieldName}" placeholder. Implement it on the form.
+## Code Review for Better Clarity
 
-#### B. Conditional properties
-
-Finally, extend the current schema to allow each property to define an optional condition by which it would start showing in the form. If the condition is true, the input would appear and its value would be submitted; if the condition is not true, the input would not be shown.
-
-Implement it with the following example: "Truncate Description" should only appear if the "Description" field has a current value of more than 100 characters. Consider how you define this condition in the schema, in a way that would allow us to really take advantage of this functionality beyond this one example.
-
-## Submit your result
-
-1. Fork this StackBlitz project.
-2. Rename it to something random (it must not include 'n-challenge-editor' in its name).
-3. Apply all your changes.
-4. Email us the link to it (the Editor URL: `https://stackblitz.com/edit/<your-project-name>`), including a description of how you implemented the changes (as if you were explaining to a peer so they have better context when code reviewing).
-
-If you have any difficulties with the tool, please do reach out – you are free to work locally / any way you see more convenient.
-
-Thanks for your time and good luck!
+### Solution:
+While making these changes, we also organized the code for better readability. This included cleaning up code comments, structuring the `handleInputChange` function for better clarity, and providing meaningful variable names.
