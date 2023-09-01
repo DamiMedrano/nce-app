@@ -8,6 +8,7 @@ interface FieldRendererProps {
   placeholder?: string;
   condition?: (formData: any) => boolean;
   formData: { [key: string]: any };
+  truncateDescription?: boolean;
   handleInputChange: (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
@@ -19,12 +20,13 @@ const FieldRenderer: React.FC<FieldRendererProps> = ({
   error,
   formData,
   placeholder,
+  truncateDescription,
   condition,
   handleInputChange,
 }) => {
   const { title, type } = schema.properties[fieldName];
-
-  if (!condition) {
+  
+  if (!condition || (fieldName === 'truncateDescription' && !condition(formData))) {
     return null; // Don't render the input if the condition is not met
   }
 
@@ -64,12 +66,14 @@ const FieldRenderer: React.FC<FieldRendererProps> = ({
             rows={8}
             onChange={handleInputChange}
             className={`mt-1 px-4 py-2 block w-full border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
-              error ? 'border-red-500' : ''
+              !truncateDescription && error ? 'border-red-500' : ''
             }`}
             placeholder={placeholder}
             value={formData[fieldName] || ''}
           ></textarea>
-          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+          {!truncateDescription && error && (
+            <p className="text-red-500 text-sm mt-1">{error}</p>
+          )}
       </div>
     );
   }
@@ -83,13 +87,16 @@ const FieldRenderer: React.FC<FieldRendererProps> = ({
             id={fieldName}
             name={fieldName}
             onChange={handleInputChange}
+            checked={formData[fieldName]}
             className="mr-2 focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
           />
           <label htmlFor={fieldName} className="block text-gray-700">
             {title}
           </label>
         </div>
-        {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+        {error && (
+          <p className="text-red-500 text-sm mt-1">{error}</p>
+        )}
       </div>
     );
   }

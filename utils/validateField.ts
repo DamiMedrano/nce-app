@@ -14,10 +14,9 @@
     if (name === "Secondary Button Text" && value.length > 10) {
       return "Description can't be longer than 10 characters";
     }
-    
 
     if (name === "description" && value.length > 100) {
-      return "Description can't be longer than 100 characters";
+      return "Description can't be longer than 100 characters. It will be truncated.";
     }
 
     return undefined;

@@ -29,7 +29,7 @@ export default {
     truncateDescription: {
       title: 'Truncate Description',
       type: 'boolean',
-      condition: formData => formData.description.length > 100,
+      condition: formData => formData.description && formData.description.length > 100,
     },
   },
   required: [

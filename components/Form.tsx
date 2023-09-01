@@ -12,12 +12,18 @@ const Form: React.FC<FormProps> = ({ schema }) => {
   const [formData, setFormData] = useState<{ [key: string]: any }>({});
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [submitting, setSubmitting] = useState(false);
+  const [truncateDescription, setTruncateDescription] = useState(false);
   let debounceTimeout: NodeJS.Timeout;
 
   const handleInputChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value, type } = event.target;
+
+    if (name === 'truncateDescription') {
+      setTruncateDescription((event.target as HTMLInputElement).checked);
+      console.log(truncateDescription);
+    }
     const fieldValue =
       type === 'checkbox' ? (event.target as HTMLInputElement).checked : value;
 
@@ -47,15 +53,28 @@ const Form: React.FC<FormProps> = ({ schema }) => {
 
     try {
       setSubmitting(true);
-      setDataToDB('Damian-Medrano', formData);
+
+      // Truncate description if needed
+      let truncatedDescription = formData.description;
+      if (truncateDescription || truncatedDescription.length > 100) {
+        truncatedDescription = truncatedDescription.substring(0, 100) + '...';
+      }
+
+      // Update form data with truncated description
+      const updatedFormData = {
+        ...formData,
+        description: truncatedDescription,
+      };
+
+      setDataToDB('Damian-Medrano', updatedFormData);
       alert("Data saved!");
       setFormData({});
+      setTruncateDescription(false); // Reset truncateDescription
     } catch (error) {
       console.error('Error:', error);
     }
     setSubmitting(false);
   };
-
 
   return (
     <form className="space-y-8" onSubmit={handleSubmit}>
@@ -69,6 +88,7 @@ const Form: React.FC<FormProps> = ({ schema }) => {
           formData={formData}
           placeholder={schema.properties[fieldName].placeholder}
           condition={schema.properties[fieldName].condition}
+          truncateDescription={truncateDescription}
         />
       ))}
       <div>
