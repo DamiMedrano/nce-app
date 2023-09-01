@@ -67,6 +67,8 @@ const Form: React.FC<FormProps> = ({ schema }) => {
           handleInputChange={handleInputChange}
           error={errors[fieldName]}
           formData={formData}
+          placeholder={schema.properties[fieldName].placeholder}
+          condition={schema.properties[fieldName].condition}
         />
       ))}
       <div>

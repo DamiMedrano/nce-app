@@ -5,6 +5,8 @@ interface FieldRendererProps {
   fieldName: string;
   schema: SchemaType;
   error?: string;
+  placeholder?: string;
+  condition?: (formData: any) => boolean;
   formData: { [key: string]: any };
   handleInputChange: (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -16,9 +18,15 @@ const FieldRenderer: React.FC<FieldRendererProps> = ({
   schema,
   error,
   formData,
+  placeholder,
+  condition,
   handleInputChange,
 }) => {
   const { title, type } = schema.properties[fieldName];
+
+  if (!condition) {
+    return null; // Don't render the input if the condition is not met
+  }
 
   if (type === 'string') {
     return (
@@ -35,7 +43,7 @@ const FieldRenderer: React.FC<FieldRendererProps> = ({
           className={`mt-1 px-4 py-2 block w-full border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
             error ? 'border-red-500' : ''
           }`}
-          placeholder={`Enter your ${fieldName}`}
+          placeholder={placeholder}
           value={formData[fieldName] || ''}
         />
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
@@ -58,7 +66,7 @@ const FieldRenderer: React.FC<FieldRendererProps> = ({
             className={`mt-1 px-4 py-2 block w-full border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
               error ? 'border-red-500' : ''
             }`}
-            placeholder={`Enter your ${fieldName}`}
+            placeholder={placeholder}
             value={formData[fieldName] || ''}
           ></textarea>
           {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
