@@ -8,7 +8,7 @@ export default {
     },
     description: {
       title: 'Description',
-      type: 'string',
+      type: 'text',
     },
     primaryButtonText: {
       title: 'Primary Button Text',

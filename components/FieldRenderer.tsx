@@ -4,6 +4,8 @@ import type { SchemaType } from '../schema/page';
 interface FieldRendererProps {
   fieldName: string;
   schema: SchemaType;
+  error?: string;
+  formData: { [key: string]: any };
   handleInputChange: (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
@@ -12,6 +14,8 @@ interface FieldRendererProps {
 const FieldRenderer: React.FC<FieldRendererProps> = ({
   fieldName,
   schema,
+  error,
+  formData,
   handleInputChange,
 }) => {
   const { title, type } = schema.properties[fieldName];
@@ -23,13 +27,18 @@ const FieldRenderer: React.FC<FieldRendererProps> = ({
           {title}
         </label>
         <input
+          required
           type="text"
           id={fieldName}
           name={fieldName}
           onChange={handleInputChange}
-          className="mt-1 px-4 py-2 block w-full border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          className={`mt-1 px-4 py-2 block w-full border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
+            error ? 'border-red-500' : ''
+          }`}
           placeholder={`Enter your ${fieldName}`}
+          value={formData[fieldName] || ''}
         />
+      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
       </div>
     );
   }
@@ -40,14 +49,19 @@ const FieldRenderer: React.FC<FieldRendererProps> = ({
         <label htmlFor={fieldName} className="block text-gray-700">
           {title}
         </label>
-        <textarea
-          id={fieldName}
-          name={fieldName}
-          rows={8}
-          onChange={handleInputChange}
-          className="mt-1 px-4 py-2 block w-full border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          placeholder={`Enter your ${fieldName}`}
-        ></textarea>
+          <textarea
+            required
+            id={fieldName}
+            name={fieldName}
+            rows={8}
+            onChange={handleInputChange}
+            className={`mt-1 px-4 py-2 block w-full border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
+              error ? 'border-red-500' : ''
+            }`}
+            placeholder={`Enter your ${fieldName}`}
+            value={formData[fieldName] || ''}
+          ></textarea>
+          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
       </div>
     );
   }
@@ -67,12 +81,18 @@ const FieldRenderer: React.FC<FieldRendererProps> = ({
             {title}
           </label>
         </div>
+        {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
       </div>
     );
   }
 
-  // we don't support this input type
-  return null;
+  // Display an error message if it's an unsupported input type
+  console.error(`Unsupported input type: ${type} for field ${fieldName}`);
+  return (
+    <div key={fieldName} className="mb-4">
+      <p className="text-red-500">Unsupported input type: {type}</p>
+    </div>
+  );
 };
 
 export default FieldRenderer;
